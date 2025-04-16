@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'user',
     'ride',
     'ride_event',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -131,3 +133,25 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
+
+INTERNAL_IPS = ['127.0.0.1']
+
+# Debug Toolbar Configuration
+# DEBUG_TOOLBAR_CONFIG = {
+#     'SHOW_TOOLBAR_CALLBACK': lambda request: (
+#         not request.is_ajax() and
+#         request.user and
+#         request.user.is_superuser and
+#         DEBUG
+#     ),
+#     'RESULTS_CACHE_SIZE': 100,
+#     'SHOW_COLLAPSED': True,
+#     'SQL_WARNING_THRESHOLD': 100,  # Time in milliseconds
+# }
+
+
+# Enable Debug Toolbar only in DEBUG mode
+# if DEBUG:
+#     import socket
+#     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+#     INTERNAL_IPS += ['.'.join(ip.split('.')[:-1] + ['1']) for ip in ips]
