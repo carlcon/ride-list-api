@@ -8,7 +8,7 @@ class RideEvent(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Event {self.id_ride_event} for Ride {self.ride.id} - {self.description}"
+        return f"Event {self.id} for Ride {self.ride.id} - {self.description}"
 
     class Meta:
         db_table = 'ride_event'

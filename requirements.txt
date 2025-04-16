@@ -1,2 +1,5 @@
 django
 djangorestframework
+Django>=5.2
+psycopg[binary]
+python-decouple
