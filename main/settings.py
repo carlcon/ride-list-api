@@ -155,3 +155,8 @@ INTERNAL_IPS = ['127.0.0.1']
 #     import socket
 #     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 #     INTERNAL_IPS += ['.'.join(ip.split('.')[:-1] + ['1']) for ip in ips]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}

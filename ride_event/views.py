@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions
 from .models import RideEvent
 from .serializers import RideEventSerializer
 from main.permissions import IsAdminRole
+from main.pagination import StandardResultsSetPagination
 
 # Create your views here.
 
@@ -10,7 +11,8 @@ class RideEventViewSet(viewsets.ModelViewSet):
     queryset = RideEvent.objects.all()
     serializer_class = RideEventSerializer
     permission_classes = [IsAdminRole]
-    
+    pagination_class = StandardResultsSetPagination
+
     def get_queryset(self):
         user = self.request.user
         if user.role == 'driver':
