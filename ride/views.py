@@ -5,12 +5,24 @@ from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
-from .models import Ride
-from ride_event.models import RideEvent
-from .serializers import RideSerializer
+from .models import Ride, RideEvent
+from .serializers import RideSerializer, RideEventSerializer
 from main.permissions import IsAdminRole
 from main.pagination import StandardResultsSetPagination
 
+class RideEventViewSet(viewsets.ModelViewSet):
+    queryset = RideEvent.objects.all()
+    serializer_class = RideEventSerializer
+    permission_classes = [IsAdminRole]
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'driver':
+            return RideEvent.objects.filter(ride__driver=user)
+        elif user.role == 'passenger':
+            return RideEvent.objects.filter(ride__rider=user)
+        return RideEvent.objects.all()
 
 class RideViewSet(viewsets.ModelViewSet):
     queryset = Ride.objects.all()

@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'user',
     'ride',
-    'ride_event',
     'debug_toolbar',
 ]
 

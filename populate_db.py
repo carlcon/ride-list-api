@@ -10,8 +10,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'main.settings')
 django.setup()
 
 from user.models import User
-from ride.models import Ride
-from ride_event.models import RideEvent
+from ride.models import Ride, RideEvent
 
 fake = Faker()
 
