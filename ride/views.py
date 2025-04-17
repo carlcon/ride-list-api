@@ -1,11 +1,11 @@
 from django.shortcuts import render
+from django.db.models import Q
 from rest_framework import viewsets, permissions
 from .models import Ride
 from .serializers import RideSerializer
 from main.permissions import IsAdminRole
 from main.pagination import StandardResultsSetPagination
 
-# Create your views here.
 
 class RideViewSet(viewsets.ModelViewSet):
     queryset = Ride.objects.all()
@@ -14,9 +14,17 @@ class RideViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        user = self.request.user
-        if user.role == 'driver':
-            return Ride.objects.filter(driver=user)
-        elif user.role == 'passenger':
-            return Ride.objects.filter(rider=user)
-        return Ride.objects.all()
+        queryset = Ride.objects.all()
+        
+        status = self.request.query_params.get('status')
+        rider_email = self.request.query_params.get('rider_email')
+        
+        filter = Q()
+        
+        if status:
+            filter &= Q(status=status)
+        if rider_email:
+            filter &= Q(rider__email=rider_email)
+            
+        return queryset.filter(filter)
+            

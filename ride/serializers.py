@@ -5,8 +5,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class RideSerializer(serializers.ModelSerializer):
-    rider = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role='passenger'))
-    driver = serializers.PrimaryKeyRelatedField(
+    rider = serializers.HyperlinkedRelatedField(
+        view_name='user-detail',
+        queryset=User.objects.filter(role='passenger')
+    )
+    driver = serializers.HyperlinkedRelatedField(
+        view_name='user-detail',
         queryset=User.objects.filter(role='driver'),
         required=False,
         allow_null=True
@@ -26,6 +30,9 @@ class RideSerializer(serializers.ModelSerializer):
             'pickup_time'
         ]
         read_only_fields = ['id']
+        extra_kwargs = {
+            'url': {'view_name': 'ride-detail'}
+        }
 
     def validate(self, data):
         if data.get('driver') and data['driver'].role != 'driver':
