@@ -11,7 +11,7 @@ class User(AbstractUser):
     ]
     
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(_('email address'), unique=True) # Override email field to make it unique
 
     def __str__(self):

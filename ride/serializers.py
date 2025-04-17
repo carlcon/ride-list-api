@@ -32,4 +32,4 @@ class RideSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Driver must have driver role")
         if data['rider'].role != 'passenger':
             raise serializers.ValidationError("Rider must have passenger role")
-        return data 
+        return data

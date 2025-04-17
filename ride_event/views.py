@@ -2,14 +2,15 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .models import RideEvent
 from .serializers import RideEventSerializer
+from main.permissions import IsAdminRole
 
 # Create your views here.
 
 class RideEventViewSet(viewsets.ModelViewSet):
     queryset = RideEvent.objects.all()
     serializer_class = RideEventSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
+    permission_classes = [IsAdminRole]
+    
     def get_queryset(self):
         user = self.request.user
         if user.role == 'driver':
