@@ -1,7 +1,12 @@
+from datetime import timedelta
 from django.shortcuts import render
-from django.db.models import Q
-from rest_framework import viewsets, permissions
+from django.db.models import Q, Prefetch
+from django.db.models.expressions import RawSQL
+from django.utils import timezone
+from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from .models import Ride
+from ride_event.models import RideEvent
 from .serializers import RideSerializer
 from main.permissions import IsAdminRole
 from main.pagination import StandardResultsSetPagination
@@ -14,10 +19,14 @@ class RideViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        queryset = Ride.objects.all()
+        queryset = self.queryset.select_related('rider', 'driver')
         
         status = self.request.query_params.get('status')
         rider_email = self.request.query_params.get('rider_email')
+        sort_by = self.request.query_params.get('sort_by')
+        order = self.request.query_params.get('order', 'asc')
+        lat = self.request.query_params.get('latitude')
+        lng = self.request.query_params.get('longitude')
         
         filter = Q()
         
@@ -25,6 +34,24 @@ class RideViewSet(viewsets.ModelViewSet):
             filter &= Q(status=status)
         if rider_email:
             filter &= Q(rider__email=rider_email)
+        
+        queryset = queryset.filter(filter)
+        
+        if sort_by == 'pickup_time':
+            if order.lower() == 'desc':
+                queryset = queryset.order_by('-pickup_time')
+            else:
+                queryset = queryset.order_by('pickup_time')
+        
+        elif sort_by == 'distance':
+            if not all([lat, lng]):
+                raise ValidationError('Both latitude and longitude are required for distance sorting')
             
-        return queryset.filter(filter)
-            
+            distance_sql = """
+                point(pickup_longitude, pickup_latitude) <@> point(%s, %s)
+            """
+            queryset = queryset.annotate(
+                distance=RawSQL(distance_sql, (lng, lat))
+            ).order_by('distance')        
+        
+        return queryset

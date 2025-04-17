@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Index
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -25,3 +26,9 @@ class Ride(models.Model):
 
     def __str__(self):
         return f"Ride {self.id} - {self.status}"
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['pickup_time']),
+            models.Index(fields=['pickup_latitude', 'pickup_longitude'])
+        ]
