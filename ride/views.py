@@ -16,14 +16,6 @@ class RideEventViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminRole]
     pagination_class = StandardResultsSetPagination
 
-    def get_queryset(self):
-        user = self.request.user
-        if user.role == 'driver':
-            return RideEvent.objects.filter(ride__driver=user)
-        elif user.role == 'passenger':
-            return RideEvent.objects.filter(ride__rider=user)
-        return RideEvent.objects.all()
-
 class RideViewSet(viewsets.ModelViewSet):
     queryset = Ride.objects.all()
     serializer_class = RideSerializer
@@ -31,7 +23,15 @@ class RideViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        queryset = self.queryset.select_related('rider', 'driver')
+        queryset = Ride.objects.select_related('rider', 'driver').prefetch_related(
+            Prefetch(
+                'ride_events',
+                queryset=RideEvent.objects.filter(
+                    created_at__gte=timezone.now() - timedelta(hours=24)
+                )[:20],
+                to_attr='todays_ride_events'
+            )
+        )
         
         status = self.request.query_params.get('status')
         rider_email = self.request.query_params.get('rider_email')

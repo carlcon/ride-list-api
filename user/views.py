@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
-from .serializers import UserSerializer
 from django.contrib.auth import get_user_model
+from rest_framework import viewsets, permissions
+
+from .serializers import UserSerializer
 from main.permissions import IsAdminRole
 from main.pagination import StandardResultsSetPagination
 
