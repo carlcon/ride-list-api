@@ -14,8 +14,13 @@ class RideEventSerializer(serializers.ModelSerializer):
 
 
 class RideSerializer(serializers.ModelSerializer):
-    rider = serializers.SerializerMethodField()
-    driver = serializers.SerializerMethodField()
+    rider = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role='passenger'), style={'base_template': 'input.html'})
+    driver = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.filter(role='driver'),
+        required=False,
+        allow_null=True,
+        style={'base_template': 'input.html'}
+    )
     todays_ride_events = serializers.SerializerMethodField()
 
     class Meta:
@@ -33,14 +38,7 @@ class RideSerializer(serializers.ModelSerializer):
             'todays_ride_events',
         ]
     
-    def get_rider(self, obj):
-        return obj.rider.get_full_name()
-
-    def get_driver(self, obj):
-        if obj.driver:
-            return obj.driver.get_full_name()
-        return None
-    
     def get_todays_ride_events(self ,obj):
-        return RideEventSerializer(obj.todays_ride_events, many=True).data
+        todays_ride = obj.todays_ride_events if hasattr(obj, 'todays_ride_events') else []
+        return RideEventSerializer(todays_ride, many=True).data
         
