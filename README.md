@@ -1,6 +1,7 @@
-# Ride Share API
+# Ride List API
 
 A RESTful API using Django REST Framework for managing ride information.
+
 
 ## Features
 
@@ -11,22 +12,28 @@ A RESTful API using Django REST Framework for managing ride information.
 
 ## Getting Started
 
+Clone the repository
+```bash
+git clone https://github.com/carlcon/ride-list-api.git
+cd ride-list-api
+```
+
+
 ### Prerequisites
 
 - Python 3.12
 - psql 17.4
 
+
 ### Installation
 
 
-```bash
-# Clone the repository
+- Run this on terminal
 
-git clone https://github.com/carlcon/ride-list-api.git
-cd ride-list-api
+```bash
 
 # Create and activate the virtual environment:
-pyhon -m venv venv
+python -m venv venv
 source venv/bin/activate # for linux. On Windows, use venv\Scripts\activate
 
 # Install dependencies
@@ -38,17 +45,39 @@ cp .env.sample .env
 # Setup the database
 bash setup_db.sh
 
-# Create a Django superuser 
-python manage.py createsuperuser --username admin --email admin@example.com
-# When prompted, enter your password (e.g. Admin1234@ )
+# Run migrations
+python manage.py migrate
 
-# Populate the database with sample data:
+# Create Django superuser non-interactively
+echo "
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='admin').exists():
+    admin = User.objects.create_superuser('admin', 'admin@example.com', 'Admin1234@')
+    admin.role = 'admin'
+    admin.save()
+" | python manage.py shell
+
+# Populate the database with sample data
 python populate_db.py
 
-# Create a superuser
-python manage.py 
+# Run the dev server
+python manage.py runserver 8082
 
-# Start the django's development server.
-python manage.py runserver
 
 ```
+
+### Access the API
+
+Once the server is running:
+- Open your browser and go to: http://127.0.0.1:8082
+
+- Access the Django admin panel at: http://127.0.0.1:8082/admin
+
+    - Login using:
+
+        - Username: admin
+
+        - Password: Admin1234@
+
+- View the Ride List API at: http://127.0.0.1:8082/api/rides/
