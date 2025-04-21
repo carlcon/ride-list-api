@@ -5,3 +5,5 @@ psycopg[binary]
 python-decouple
 django-debug-toolbar
 Faker
+pytest
+pytest-django

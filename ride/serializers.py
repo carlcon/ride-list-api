@@ -22,6 +22,7 @@ class RideSerializer(serializers.ModelSerializer):
         style={'base_template': 'input.html'}
     )
     todays_ride_events = serializers.SerializerMethodField()
+    distance = serializers.SerializerMethodField()
 
     class Meta:
         model = Ride
@@ -36,9 +37,13 @@ class RideSerializer(serializers.ModelSerializer):
             'dropoff_longitude',
             'pickup_time',
             'todays_ride_events',
+            'distance',
         ]
     
     def get_todays_ride_events(self ,obj):
         todays_ride = obj.todays_ride_events if hasattr(obj, 'todays_ride_events') else []
         return RideEventSerializer(todays_ride, many=True).data
-        
+    
+    def get_distance(self, obj):
+        distance = obj.distance if hasattr(obj, 'distance') else None
+        return distance

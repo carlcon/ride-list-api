@@ -28,6 +28,7 @@ class Ride(models.Model):
         return f"Ride {self.id} - {self.status}"
     
     class Meta:
+        ordering = ['pickup_time']
         indexes = [
             models.Index(fields=['pickup_time']),
             models.Index(fields=['pickup_latitude', 'pickup_longitude'])
